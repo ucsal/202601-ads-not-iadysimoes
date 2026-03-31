@@ -17,6 +17,7 @@ public class App {
 	static final List<Tentativa> tentativas = new ArrayList<>();
 
 	private static final Scanner in = new Scanner(System.in);
+	private static final CalculadoraNota calculadoraNota = new CalculadoraNotaPorAcertos();
 
 	public static void main(String[] args) {
 		seed();
@@ -125,7 +126,6 @@ public class App {
 		System.out.println("Questão cadastrada: " + q.getId() + " (na prova " + provaId + ")");
 	}
 
-
 	static void aplicarProva() {
 		if (participantes.isEmpty()) {
 			System.out.println("cadastre participantes primeiro");
@@ -166,7 +166,7 @@ public class App {
 			imprimirTabuleiroFen(q.getFenInicial());
 
 			for (var alt : q.getAlternativas()) {
-			    System.out.println(alt);
+				System.out.println(alt);
 			}
 
 			System.out.print("Sua resposta (A–E): ");
@@ -188,28 +188,20 @@ public class App {
 
 		tentativas.add(tentativa);
 
-		int nota = calcularNota(tentativa);
+		int nota = calculadoraNota.calcular(tentativa);
 		System.out.println("\n--- Fim da Prova ---");
 		System.out.println("Nota (acertos): " + nota + " / " + tentativa.getRespostas().size());
-	}
-
-	public static int calcularNota(Tentativa tentativa) {
-		int acertos = 0;
-		for (var r : tentativa.getRespostas()) {
-			if (r.isCorreta())
-				acertos++;
-		}
-		return acertos;
 	}
 
 	static void listarTentativas() {
 		System.out.println("\n--- Tentativas ---");
 		for (var t : tentativas) {
-			System.out.printf("#%d | participante=%d | prova=%d | nota=%d/%d%n", t.getId(), t.getParticipanteId(),
-					t.getProvaId(), calcularNota(t), t.getRespostas().size());
+			System.out.printf("#%d | participante=%d | prova=%d | nota=%d/%d%n",
+					t.getId(), t.getParticipanteId(), t.getProvaId(),
+					calculadoraNota.calcular(t), 
+					t.getRespostas().size());
 		}
 	}
-
 
 	static Long escolherParticipante() {
 		System.out.println("\nParticipantes:");
@@ -254,7 +246,6 @@ public class App {
 	}
 
 	static void imprimirTabuleiroFen(String fen) {
-
 		String parteTabuleiro = fen.split(" ")[0];
 		String[] ranks = parteTabuleiro.split("/");
 
@@ -263,12 +254,10 @@ public class App {
 		System.out.println("   -----------------");
 
 		for (int r = 0; r < 8; r++) {
-
 			String rank = ranks[r];
 			System.out.print((8 - r) + " | ");
 
 			for (char c : rank.toCharArray()) {
-
 				if (Character.isDigit(c)) {
 					int vazios = c - '0';
 					for (int i = 0; i < vazios; i++) {
@@ -287,9 +276,7 @@ public class App {
 		System.out.println();
 	}
 
-
 	static void seed() {
-
 		var prova = new Prova();
 		prova.setId(proximaProvaId++);
 		prova.setTitulo("Olimpíada 2026 • Nível 1 • Prova A");
@@ -306,9 +293,7 @@ public class App {
 				""");
 
 		q1.setFenInicial("6k1/5ppp/8/8/8/7Q/6PP/6K1 w - - 0 1");
-
 		q1.setAlternativas(new String[] { "A) Qh7#", "B) Qf5#", "C) Qc8#", "D) Qh8#", "E) Qe6#" });
-
 		q1.setAlternativaCorreta('C');
 
 		questoes.add(q1);
